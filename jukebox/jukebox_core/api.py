@@ -10,7 +10,7 @@ from datetime import datetime
 from signal import SIGABRT
 
 from django.contrib.auth.models import User
-from models import Song, Artist, Album, Genre, Queue, Favourite, History, Player
+from models import Song, Artist, Album, Genre, Queue, Favourite, History, Player, fuzzy_datetime
 
 
 class api_base:
@@ -691,7 +691,8 @@ class queue(api_base):
             queue = Queue.objects.get(Song=song)
         except ObjectDoesNotExist:
             queue = Queue(
-                Song=song
+                Song=song,
+                Created=fuzzy_datetime(datetime.now()),
             )
             queue.save()
         queue.User.add(user)
