@@ -353,8 +353,7 @@ class songs(api_base):
         try:
             data = Queue.objects.all()
             data = data.annotate(VoteCount=Count("User"))
-            data = data.annotate(MinCreated=Min("Created"))
-            data = data.order_by("-VoteCount", "MinCreated")[0:1].get()
+            data = data.order_by("Created", "-VoteCount")[0:1].get()
             self.addToHistory(data.Song, data.User)
             song_instance = data.Song
             data.delete()
@@ -607,14 +606,13 @@ class queue(api_base):
         ("votes", "VoteCount", ),
     )
     order_by_default = (
+        ("created", "Created", ),
         ("votes", "-VoteCount", ),
-        ("created", "MinCreated", ),
     )
 
     def index(self, page=1):
         object_list = Queue.objects.all()
         object_list = object_list.annotate(VoteCount=Count("User"))
-        object_list = object_list.annotate(MinCreated=Min("Created"))
         object_list = self.source_set_order(object_list)
 
         # prepare result
