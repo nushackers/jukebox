@@ -387,7 +387,7 @@ Music = {
     updateTimeLeft: function() {
         if (0 == Music.remaining) {
             $('#currentSong span.timeRemaining').hide();
-            setTimeout("Music.getCurrentSong()", 1000);
+            setTimeout("Music.getCurrentSong()", Math.random() * 1000);
             return;
         }
         else if (Music.remaining > 0) {
