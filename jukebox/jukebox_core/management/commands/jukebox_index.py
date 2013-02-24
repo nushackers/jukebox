@@ -9,7 +9,10 @@ from mutagen.mp3 import MP3, HeaderNotFoundError
 from mutagen.id3 import ID3NoHeaderError
 
 
-class FileIndexer:
+class FileIndexer(object):
+    def __init__(self, options):
+        self.options = options
+
     def index(self, filename):
         # skip already indexed
         data = Song.objects.filter(Filename__exact=filename)
@@ -66,6 +69,8 @@ class FileIndexer:
                 Length=tags["length"],
                 Filename=filename
             )
+            if self.options.get('verbosity', '0') != '0':
+                print "indexed file", filename
             song.save()
         except HeaderNotFoundError:
             print "File contains invalid header data: " + filename
@@ -99,7 +104,7 @@ class Command(BaseCommand):
 
         print "Indexing music in " + options["path"]
         print "This may take a while"
-        self.indexer = FileIndexer()
+        self.indexer = FileIndexer(options)
         self.index(options["path"])
 
     def index(self, path):
