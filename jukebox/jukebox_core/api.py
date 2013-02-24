@@ -204,14 +204,15 @@ class api_base:
 
     def source_set_order(self, object_list):
         if not self.order_by_field is None:
-            field_name = self.order_by_fields.get(self.order_by_field)
+            matches = (i[0] == self.order_by_field for i in self.order_by_fields)
+            field_name = next(matches)
             if self.order_by_direction == "desc":
                 field_name = "-" + field_name
 
             return object_list.order_by(field_name)
         elif not self.order_by_default is None:
             order = []
-            for key, value in self.order_by_default.items():
+            for key, value in self.order_by_default:
                 order.append(value)
 
             object_list = object_list.order_by(*order)
@@ -227,7 +228,7 @@ class api_base:
                 "direction": self.order_by_direction,
             })
         elif not self.order_by_default is None:
-            for field, order in self.order_by_default.items():
+            for field, order in self.order_by_default:
                 result["order"].append({
                     "field": field,
                     "direction": "desc" if order.startswith("-") else "asc",
@@ -236,17 +237,17 @@ class api_base:
         return result
 
 class songs(api_base):
-    order_by_fields = {
-        "title": "Title",
-        "artist": "Artist__Name",
-        "album": "Album__Title",
-        "year": "Year",
-        "genre": "Genre__Name",
-        "length": "Length",
-    }
-    order_by_default = {
-        "title": "Title",
-    }
+    order_by_fields = (
+        ("title", "Title", ),
+        ("artist", "Artist__Name", ),
+        ("album", "Album__Title", ),
+        ("year", "Year", ),
+        ("genre", "Genre__Name", ),
+        ("length", "Length", ),
+    )
+    order_by_default = (
+        ("title", "Title", ),
+    )
 
     def index(self, page=1):
         object_list = Song.objects.all()
@@ -445,17 +446,17 @@ class songs(api_base):
                 player.delete()
 
 class history(api_base):
-    order_by_fields = {
-        "title": "Song__Title",
-        "artist": "Song__Artist__Name",
-        "album": "Song__Album__Title",
-        "year": "Song__Year",
-        "genre": "Song__Genre__Name",
-        "created": "Created",
-    }
-    order_by_default = {
-        "created": "-Created",
-    }
+    order_by_fields = (
+        ("title", "Song__Title", ),
+        ("artist", "Song__Artist__Name", ),
+        ("album", "Song__Album__Title", ),
+        ("year", "Song__Year", ),
+        ("genre", "Song__Genre__Name", ),
+        ("created", "Created", ),
+    )
+    order_by_default = (
+        ("created", "-Created", ),
+    )
 
     def index(self, page=1):
         object_list = History.objects.all()
@@ -573,17 +574,17 @@ class history(api_base):
         return dataset
 
 class history_my(history):
-    order_by_fields = {
-        "title": "Song__Title",
-        "artist": "Song__Artist__Name",
-        "album": "Song__Album__Title",
-        "year": "Song__Year",
-        "genre": "Song__Genre__Name",
-        "created": "Created",
-    }
-    order_by_default = {
-        "created": "-Created",
-    }
+    order_by_fields = (
+        ("title", "Song__Title", ),
+        ("artist", "Song__Artist__Name", ),
+        ("album", "Song__Album__Title", ),
+        ("year", "Song__Year", ),
+        ("genre", "Song__Genre__Name", ),
+        ("created", "Created", ),
+    )
+    order_by_default = (
+        ("created", "-Created", ),
+    )
 
     def index(self, page=1):
         object_list = History.objects.all().filter(User__id=self.user_id)
@@ -596,19 +597,19 @@ class history_my(history):
 
 
 class queue(api_base):
-    order_by_fields = {
-        "title": "Song__Title",
-        "artist": "Song__Artist__Name",
-        "album": "Song__Album__Title",
-        "year": "Song__Year",
-        "genre": "Song__Genre__Name",
-        "created": "Created",
-        "votes": "VoteCount",
-    }
-    order_by_default = {
-        "votes": "-VoteCount",
-        "created": "MinCreated",
-    }
+    order_by_fields = (
+        ("title", "Song__Title", ),
+        ("artist", "Song__Artist__Name", ),
+        ("album", "Song__Album__Title", ),
+        ("year", "Song__Year", ),
+        ("genre", "Song__Genre__Name", ),
+        ("created", "Created", ),
+        ("votes", "VoteCount", ),
+    )
+    order_by_default = (
+        ("votes", "-VoteCount", ),
+        ("created", "MinCreated", ),
+    )
 
     def index(self, page=1):
         object_list = Queue.objects.all()
@@ -714,17 +715,17 @@ class queue(api_base):
 
 
 class favourites(api_base):
-    order_by_fields = {
-        "title": "Song__Title",
-        "artist": "Song__Artist__Name",
-        "album": "Song__Album__Title",
-        "year": "Song__Year",
-        "genre": "Song__Genre__Name",
-        "created": "Created",
-    }
-    order_by_default = {
-        "created": "-Created",
-    }
+    order_by_fields = (
+        ("title", "Song__Title", ),
+        ("artist", "Song__Artist__Name", ),
+        ("album", "Song__Album__Title", ),
+        ("year", "Song__Year", ),
+        ("genre", "Song__Genre__Name", ),
+        ("created", "Created", ),
+    )
+    order_by_default = (
+        ("created", "-Created", ),
+    )
 
     def index(self, page=1):
         object_list = Favourite.objects.all().filter(User__id=self.user_id)
@@ -817,12 +818,12 @@ class favourites(api_base):
 
 
 class artists(api_base):
-    order_by_fields = {
-        "artist": "Name",
-    }
-    order_by_default = {
-        "artist": "Name",
-    }
+    order_by_fields = (
+        ("artist", "Name", ),
+    )
+    order_by_default = (
+        ("artist", "Name", ),
+    )
 
     def index(self, page=1):
         # prepare result
@@ -852,13 +853,13 @@ class artists(api_base):
 
 
 class albums(api_base):
-    order_by_fields = {
-        "album": "Title",
-        "artist": "Artist__Name",
-    }
-    order_by_default = {
-        "album": "Title",
-    }
+    order_by_fields = (
+        ("album", "Title", ),
+        ("artist", "Artist__Name", ),
+    )
+    order_by_default = (
+        ("album", "Title", ),
+    )
 
     def index(self, page=1):
         # prepare result
@@ -892,12 +893,12 @@ class albums(api_base):
 
 
 class genres(api_base):
-    order_by_fields = {
-        "genre": "Name",
-    }
-    order_by_default = {
-        "genre": "Name",
-    }
+    order_by_fields = (
+        ("genre", "Name", ),
+    )
+    order_by_default = (
+        ("genre", "Name", ),
+    )
 
     def index(self, page=1):
         # prepare result
@@ -927,12 +928,12 @@ class genres(api_base):
 
 
 class years(api_base):
-    order_by_fields = {
-        "year": "Year",
-    }
-    order_by_default = {
-        "year": "Year"
-    }
+    order_by_fields = (
+        ("year", "Year", ),
+    )
+    order_by_default = (
+        ("year", "Year", ),
+    )
 
     def index(self, page=1):
         # prepare result
