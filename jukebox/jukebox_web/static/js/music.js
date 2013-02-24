@@ -391,8 +391,8 @@ Music = {
             return;
         }
         else if (Music.remaining > 0) {
-            var minutes = parseInt(Music.remaining / 60);
             var secondsInt = Music.remaining % 60;
+            var minutes = (Music.remaining - secondsInt) / 60;
             var seconds = secondsInt.toString();
             if (secondsInt < 10) {
                 seconds = "0" + seconds;
