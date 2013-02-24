@@ -397,8 +397,9 @@ Music = {
             if (secondsInt < 10) {
                 seconds = "0" + seconds;
             }
-            $('#currentSong span.timeRemaining').show();
-            $('#currentSong span.timeRemaining').html("(" + minutes + ":" + seconds + ")");
+            $('#currentSong span.timeRemaining')
+                .html("(" + minutes + ":" + seconds + ")")
+                .show();
             Music.remaining--;
         }
         setTimeout("Music.updateTimeLeft()", 1000);
