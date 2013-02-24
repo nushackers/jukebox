@@ -99,13 +99,12 @@ class Command(BaseCommand):
 
         print "Indexing music in " + options["path"]
         print "This may take a while"
+        self.indexer = FileIndexer()
         self.index(options["path"])
 
     def index(self, path):
         if not path.endswith("/"):
             path += "/"
-
-        indexer = FileIndexer()
 
         listing = os.listdir(path)
         for filename in listing:
@@ -113,4 +112,4 @@ class Command(BaseCommand):
             if os.path.isdir(filename):
                 self.index(filename + "/")
             elif filename.endswith(".mp3"):
-                indexer.index(filename)
+                self.indexer.index(filename)
