@@ -389,7 +389,7 @@ Music = {
     },
 
     updateTimeLeft: function() {
-        if (0 == Music.remaining) {
+        if (Music.remaining <= 0) {
             $('#currentSong span.timeRemaining').hide();
             setTimeout("Music.getCurrentSong()", 1000);
             return;
