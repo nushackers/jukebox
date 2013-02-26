@@ -31,7 +31,7 @@ class FileIndexer(object):
             }
 
             for k, v in id3.items():
-                tags[k] = v[0].lower()
+                tags[k] = v[0]
 
             if tags["artist"] is None or tags["title"] is None:
                 print "Artist or title not set in " + \
