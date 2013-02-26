@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.syndication.views import Feed
 import time
+import datetime
 
 class Artist(models.Model):
     class Meta:
@@ -52,10 +53,22 @@ class Song(models.Model):
     Filename = models.CharField(max_length=1000)
 
 
+def fuzzy_datetime(d=None):
+    if d is None:
+        d = datetime.datetime.now()
+    delta_minute = 0
+    if d.minute > 30:
+        delta_minute = 60 - d.minute
+    else:
+        delta_minute = 30 - d.minute
+    wrap = datetime.timedelta(minutes=delta_minute)
+    return d.replace(second=0, microsecond=0) + wrap
+
+
 class Queue(models.Model):
     Song = models.ForeignKey(Song, unique=True)
     User = models.ManyToManyField(User)
-    Created = models.DateTimeField(auto_now_add=True)
+    Created = models.DateTimeField(default=fuzzy_datetime)
 
 
 class Favourite(models.Model):
